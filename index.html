@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button onclick="myFunction()">Click me</button>
+  <input type="file" onchange="upload(this.files)" />
+  <img src=UploadAvatar() alt=”Image” height=512 width=512>
+</body>
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+  integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+<script>
+  const socket = io(
+    'http://localhost:3000',
+    {
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 100,
+      transports: ['websocket', 'polling'],
+    },
+  );
+  //socket.emit('sendAmount', { number: 0 });
+
+  socket.on('cakes', (paylaod) => {
+    alert('Cakes count: ' + paylaod.number)
+  })
+  console.log(socket)
+  socket.on('newMessage', (paylaod) => {
+    console.log(paylaod)
+  })
+  function upload(files) {
+    socket.emit("upload", files[0], (status) => {
+      console.log(status);
+    });
+  }
+
+  socket.on('uploadAvatar',(payload) => {
+   let img = document.createElement("img");
+   img.setAttribute("src", payload);
+   document.body.appendChild(img);
+  })
+
+</script>
+
+</html>
